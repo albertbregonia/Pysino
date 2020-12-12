@@ -31,7 +31,7 @@ async def play(bot):
         if bot.channel.name == 'blackjack':
             await blackjack.play(pysino, bot)
     else:
-        await bot.channel.send(f'{bot.author.mention}, please register first with our database before you play!')
+        await bot.channel.send(f'{bot.author.mention}, please register with our database before you play any games!')
 
 
 pysino.run('<BOT-KEY>')
