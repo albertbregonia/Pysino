@@ -2,6 +2,7 @@ import discord
 import os
 import random as r
 from games.Game import Game
+import util.Currency as c
 
 class Blackjack(Game):
     
@@ -99,13 +100,13 @@ class Blackjack(Game):
             response = await pysino.wait_for('message', check=lambda message: message.author == bot.author)
             try: 
                 bet = int(response.content)
-                if bet > 0:
+                if bet > 0 and bet <= c.getBal(str(bot.author)):
                     await bot.channel.send(f'{bot.author.mention}, you have successfully bet **${bet}**.')
                     break
                 else:
                     raise Exception
             except:
-                await bot.channel.send(f'{bot.author.mention}, unfortunately your input was invalid. Please try again.')
+                await bot.channel.send(f'{bot.author.mention}, unfortunately your input was invalid. {c.getBal(str(bot.author))} Please try again.')
         #Load Deck
         self.resetDeck()
         #Draw Cards
@@ -116,10 +117,13 @@ class Blackjack(Game):
         dealerCardsDisplay = self.displayAppend(self.card(dealerCards[0]), self.card(dealerCards[1]))
         dealerCardsHidden = self.displayAppend(self.card(dealerCards[0]), self.card('?'))
         #Check BlackJack
+        winner = 0
         if self.getValue(playerCards) == 21:
+            winner = 1
             await bot.channel.send(self.printCards(dealerCardsDisplay, playerCardsDisplay))
             await bot.channel.send(f'{bot.author.mention}, ***BLACKJACK*** - You have just won **${bet*2}**')
         elif self.getValue(dealerCards) == 21:
+            winner = 2
             await bot.channel.send(self.printCards(dealerCardsDisplay, playerCardsDisplay))
             await bot.channel.send(f'{bot.author.mention}, ***DEALER BLACKJACK*** - You have just lost your bet of **${bet}**')
         else: #Player Plays
@@ -139,7 +143,7 @@ class Blackjack(Game):
                 lim = 3
                 while error: #wait for action
                     try:
-                        sel = await pysino.wait_for('message', check=lambda message: message.author == bot.author)
+                        sel = await pysino.wait_for('message', check=lambda message: message.author == bot.author and message.channel == bot.channel)
                         choice = int(sel.content.strip())
                         error = choice > 3 or choice < 0
                         if error:
@@ -164,4 +168,4 @@ class Blackjack(Game):
             else:
                 betResult = f'{bot.author.mention}, as this was a tie, you keep your bet of: **${bet}**'
             await bot.channel.send(f'{winScreen}\n{betResult}') #determine who wins
-            self.handleBalance()
+        self.handleBalance(str(bot.author), winner, bet) #handling winnings/losses

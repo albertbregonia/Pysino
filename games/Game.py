@@ -1,3 +1,4 @@
+import util.Currency as c
 # essentailly a semi abstract class to house general game features
 
 class Game:
@@ -11,8 +12,14 @@ class Game:
     def tutorial(self):
         pass
 
-    def handleBalance(self, user):
-        pass # fill in with something that handles balance per user
+    def handleBalance(self, user, winner, bet):
+        if winner == 1:
+            c.changeBal(user, bet)
+        elif winner == 2:
+            c.changeBal(user, -1*bet)
+
+    def win(self, pv, dv):
+        pass
 
     async def play(self, pysino, bot):
         pass
