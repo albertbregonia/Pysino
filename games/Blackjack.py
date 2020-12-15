@@ -100,7 +100,7 @@ class Blackjack(Game):
             response = await pysino.wait_for('message', check=lambda message: message.author == bot.author)
             try: 
                 bet = int(response.content)
-                if bet > 0 and bet <= c.getBal(str(bot.author)):
+                if bet > 0 and bet <= c.getBal(str(bot.author)) and c.getBal(str(bot.author))>0:
                     await bot.channel.send(f'{bot.author.mention}, you have successfully bet **${bet}**.')
                     break
                 else:
@@ -134,9 +134,12 @@ class Blackjack(Game):
                     if self.getValue(playerCards)>=21:
                         break
                 elif choice == 2: #x2
-                    bet*=2
-                    playerCards, playerCardsDisplay = self.hit(playerCards, playerCardsDisplay)
-                    break
+                    if c.getBal(str(bot.author))>=bet*2:
+                        bet*=2
+                        playerCards, playerCardsDisplay = self.hit(playerCards, playerCardsDisplay)
+                        break
+                    else:
+                        await bot.channel.send(f'{bot.author.mention} do not have the funds to support this bet!')
                 await bot.channel.send(self.printCards(dealerCardsHidden, playerCardsDisplay)) #display cards
                 await bot.channel.send(f':zero: - **HIT**\n:one: - **STAND**\n:two: - **x2**\n\n\n**Select an Action:**') #display actions
                 error = True

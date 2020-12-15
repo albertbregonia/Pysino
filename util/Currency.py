@@ -26,17 +26,19 @@ class Currency(cmd.Cog):
     async def give(self, bot, get, amt):
         give = str(bot.author)
         amt = int(amt)
-        if getBal(give) >= amt:
+        if getBal(give) >= amt and amt > 0:
             changeBal(give, -1*amt)
             changeBal(get, amt)
             await bot.channel.send(f'{bot.author.mention}, you have successfully given `{get}` ${amt}')
+        elif amt < 0:
+            await bot.channel.send(f'BROKE: {bot.author.mention}, you have unsuccessfully tried to rob this mans `{get}`. What\'s wrong with you bro?')
         else:
             await bot.channel.send(f'{bot.author.mention}, you do not have the funds to support this transaction! Please use: `*bal`')
     
     @cmd.command(help='Display your current balance')
     async def bal(self, bot):
         if os.path.exists(f'users/{str(bot.author)}.txt'):
-            await bot.channel.send(f'{bot.author.mention}, your current balance is: **{getBal(str(bot.author))}**')
+            await bot.channel.send(f'{bot.author.mention}, your current balance is: **${getBal(str(bot.author))}**')
         else:
             await bot.channel.send(f'{bot.author.mention}, please register with our database before you display your balance! Please use `*register`.')
 
