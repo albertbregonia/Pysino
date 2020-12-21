@@ -106,7 +106,7 @@ class Blackjack(Game):
                 else:
                     raise Exception
             except:
-                await bot.channel.send(f'{bot.author.mention}, unfortunately your input was invalid. {c.getBal(str(bot.author))} Please try again.')
+                await bot.channel.send(f'{bot.author.mention}, unfortunately your input was invalid. Please try again.')
         #Load Deck
         self.resetDeck()
         #Draw Cards

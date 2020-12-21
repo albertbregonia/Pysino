@@ -5,15 +5,12 @@ import os
 
 def changeBal(user, amt):
     bal = getBal(user)+amt # amt should be negative to take away
-    userFile = open(f'users/{user}.txt', 'w')
-    userFile.write(f'${bal}')
-    userFile.close()
+    with open(f'users/{user}.txt', 'w') as userFile:
+        userFile.write(f'${bal}')
 
 def getBal(user):
-    userFile = open(f'users/{user}.txt', 'r')
-    bal = int(userFile.readline()[1:]) # [1:] to ignore $
-    userFile.close()
-    return bal
+    with open(f'users/{user}.txt', 'r') as userFile:
+        return int(userFile.readline()[1:]) # [1:] to ignore $
 
 # ==== BOT FUNCTIONS ==== #
 
@@ -31,7 +28,7 @@ class Currency(cmd.Cog):
             changeBal(get, amt)
             await bot.channel.send(f'{bot.author.mention}, you have successfully given `{get}` ${amt}')
         elif amt < 0:
-            await bot.channel.send(f'BROKE: {bot.author.mention}, you have unsuccessfully tried to rob this mans `{get}`. What\'s wrong with you bro?')
+            await bot.channel.send(f'***BROKE***: {bot.author.mention}, you have unsuccessfully tried to rob this mans `{get}`. What\'s wrong with you bro?')
         else:
             await bot.channel.send(f'{bot.author.mention}, you do not have the funds to support this transaction! Please use: `*bal`')
     
