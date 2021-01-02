@@ -1,5 +1,7 @@
 from discord.ext import commands as cmd
 import os
+import random as r
+import operator
 
 # ==== UTILITY FUNCTIONS ==== #
 
@@ -19,10 +21,31 @@ class Currency(cmd.Cog):
     def __init__(self, pysino):
         self.pysino = pysino
 
-    @cmd.command(help='Give another player money some of your money')
+    @cmd.command(help='Earn money doing math. Rate is $2 per digit in the answer')
+    async def work(self, bot):
+        num1, num2 = r.randint(0,256), r.randint(0,256)
+        ops = {'+':operator.add, '-':operator.sub, '*':operator.mul, '/':operator.truediv} #operators
+        op = list(ops.keys())[r.randrange(0,4)] #select random operator
+        ans = int(ops[op](num1,num2))
+        await bot.channel.send(f'{bot.author.mention}, Solve this equation to earn money ***Integer Answers Only*** : `{num1}{op}{num2} = ?`')
+        error = True
+        while error:
+            response = await self.pysino.wait_for('message', check=lambda message: message.author == bot.author)
+            try:
+                if int(response.content) == ans:
+                    earned = len(str(abs(ans)))*2
+                    changeBal(str(bot.author), earned)
+                    await bot.channel.send(f'{bot.author.mention}, you have successfully earned **${earned}**.')
+                else:
+                    await bot.channel.send(f'{bot.author.mention}, unfortunately you were incorrect. Correct answer: {ans}')
+                break
+            except:
+                await bot.channel.send(f'{bot.author.mention}, unfortunately your input was invalid. Please try again.')
+
+
+    @cmd.command(help='Give another player money')
     async def give(self, bot, get, amt):
-        give = str(bot.author)
-        amt = int(amt)
+        give, amt = str(bot.author), int(amt)
         if getBal(give) >= amt and amt > 0:
             changeBal(give, -1*amt)
             changeBal(get, amt)
