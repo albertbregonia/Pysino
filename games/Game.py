@@ -13,10 +13,6 @@ class Game(abc.ABC):
         elif winner == 2:
             c.changeBal(user, -1*bet)
 
-    @abc.abstractproperty    
-    def welcome(self):
-        pass
-
     @abc.abstractproperty
     def tutorial(self):
         pass

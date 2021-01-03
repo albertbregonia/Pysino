@@ -1,10 +1,11 @@
 from discord.ext import commands as cmd
+import util.ErrorHandler as e
 import glob as match
 import discord
 import os
+
 from games.Blackjack import Blackjack
 from games.Roulette import Roulette
-import util.ErrorHandler as e
 
 pysino = cmd.Bot(command_prefix='*')
 
@@ -47,12 +48,12 @@ async def register(bot):
     else:
         await bot.channel.send(f'{bot.author.mention}, you are already registered with our system!')
 
-@pysino.command(help='Start a game based on the current channel you are in')
+@pysino.command(help='Start a game based on the current channel')
 async def play(bot):
     error = e.fullSetup(f'users/{bot.guild.name}/', f'users/{bot.guild.name}/{str(bot.author)}.txt')
     if error == 'full':
         if bot.channel.name == 'blackjack':
-                await blackjack.play(pysino, bot)
+            await blackjack.play(pysino, bot)
         elif bot.channel.name == 'roulette':
             await roulette.play(pysino, bot)
     else:

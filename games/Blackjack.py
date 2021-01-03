@@ -7,13 +7,9 @@ import cogs.Currency as c
 class Blackjack(Game):
     
     def __init__(self):
-        self.deck = [] 
-
-    def welcome(self):
-        border = '='*20
-        s = 'Welcome to Blackjack by Albert Bregonia\nPlease use the respective tutorial command if you wish to learn how to play.'
-        return f'{border}\n{s}\n{border}\n'
+        self.deck = []
     
+    @property
     def tutorial(self):
         return """**Blackjack Tutorial:**  
         In this form of blackjack, the player plays against the dealer.
@@ -26,6 +22,7 @@ class Blackjack(Game):
         """
 
     #main runner
+    @property
     async def play(self, pysino, bot):
         error = True
         while error: #Initial Bet

@@ -6,11 +6,10 @@ class Roulette(Game):
     def __init__(self):
         pass
 
-    def welcome(self):
-        pass
-
+    @property
     def tutorial(self):
         pass
-
+    
+    @property
     async def play(self, pysino, bot):
         pass
