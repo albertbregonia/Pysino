@@ -65,4 +65,4 @@ async def how2(bot):
     elif bot.channel.name == 'roulette':
         await bot.channel.send(roulette.tutorial())
 
-pysino.run('Nzg2Nzc2MDEyNDU2NzIyNDcy.X9LUQg.tNtJGow-MMfGHTJ41ui6d_dYyoE')
+pysino.run('<BOT-KEY>')
