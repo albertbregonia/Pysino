@@ -1,15 +1,10 @@
-import util.Currency as c
+import cogs.Currency as c
+import abc
 # essentailly a semi abstract class to house general game features
 
-class Game:
+class Game(abc.ABC):
 
     def __init__(self):
-        pass
-
-    def welcome(self):
-        pass
-
-    def tutorial(self):
         pass
 
     def handleBalance(self, user, winner, bet):
@@ -18,8 +13,14 @@ class Game:
         elif winner == 2:
             c.changeBal(user, -1*bet)
 
-    def win(self, pv, dv):
+    @abc.abstractproperty    
+    def welcome(self):
         pass
 
+    @abc.abstractproperty
+    def tutorial(self):
+        pass
+
+    @abc.abstractproperty
     async def play(self, pysino, bot):
         pass

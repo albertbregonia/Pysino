@@ -2,7 +2,7 @@ import discord
 import os
 import random as r
 from games.Game import Game
-import util.Currency as c
+import cogs.Currency as c
 
 class Blackjack(Game):
     
@@ -11,86 +11,19 @@ class Blackjack(Game):
 
     def welcome(self):
         border = '='*20
-        s = 'Welcome to Blackjack by Kanin\nPlease use the respective tutorial command if you wish to learn how to play.'
+        s = 'Welcome to Blackjack by Albert Bregonia\nPlease use the respective tutorial command if you wish to learn how to play.'
         return f'{border}\n{s}\n{border}\n'
-
-    #loads in cards to self.deck and then shuffles
-    def resetDeck(self):
-        self.deck.clear()
-        types = {'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'}
-        for kind in types: #add 13 of each card
-            for i in range(4):
-                self.deck.append(kind)
-        for i in range(200): #shuffle
-            spot = r.randint(0,51) #randomly swap cards
-            spot2 = r.randint(0,51)
-            self.deck[spot], self.deck[spot2] = self.deck[spot2], self.deck[spot]
-            
-    #returns a list where the elements are strings that make the shape of a card with the value in the middle
-    def card(self, value):
-        top = '-----------'
-        side = '|         |'
-        center = f'|    {value}    |'
-        if len(center) > 11:
-            center = center.replace(' ', '', 1)
-        return [top,side,side,center,side,side,top]
-
-    #append new cards horizontally to 'card1', returns a list of parts
-    def displayAppend(self, card1, card2):
-        for i in range(7):
-            card1[i] += f'   {card2[i]}'
-        return card1
-
-    #build the parts into a display to send to a discord channel
-    def printCards(self, card1, card2):
-        set1 = set2 = ''
-        for i in range(7):
-            set1 += card1[i]+'\n'
-            set2 += card2[i]+'\n'
-        return f'**=== Dealer Cards ===**\n```{set1}```**=== Your Cards ===**\n```{set2}```'
-
-    #calculate total value of cards
-    def getValue(self, cardSet):
-        total = 0
-        numAces = 0
-        for card in cardSet:
-            if card == 'J' or card == 'Q' or card == 'K':
-                total += 10
-            elif card == 'A':
-                numAces += 1
-            else:
-                total += int(card)
-        if numAces >= 2:
-            total += 1*numAces
-        elif numAces == 1:
-            if total+11<=21:
-                total += 11
-            else:
-                total+=1
-        return total
-
-    #draw new card, add it to the card set and update display
-    def hit(self, cardSet, cardSetDisplay):
-        cardSet.append(self.deck.pop()) 
-        return cardSet, self.displayAppend(cardSetDisplay, self.card(cardSet[-1]))
-
-    #determine who wins as a string based on totals
-    def win(self, pv, dv):
-        winner = 0 # 0 = tie ; 1 = player ; 2 = dealer
-        result = ''
-        if pv == dv:
-            result = '**PUSH**'
-        elif pv <= 21:
-            if dv < pv or dv>21:
-                result = '**YOU WIN**'
-                winner = 1
-            else:
-                result = '**DEALER WINS**'
-                winner = 2
-        else:
-            result = '**DEALER WINS**'
-            winner = 2
-        return winner, f'{result} Your Total: {pv} / Dealer Total: {dv}'
+    
+    def tutorial(self):
+        return """**Blackjack Tutorial:**  
+        In this form of blackjack, the player plays against the dealer.
+        The goal is to have a higher total hand value than the dealer that does *NOT* exceed ***21***.
+        When the player `hits`, they get another card. When they `stand`, they end their turn and the dealer gets to hit.
+        When the player does a `x2`; they get ***1*** extra card, their bet ***doubles*** and their turn is ended.
+        The value of the cards is that of the number written with a few exceptions. The ***K, J*** and ***Q*** are worth ***10*** points.
+        The ***Ace*** is an interesting card in which it is worth 11 when the total hand value does not exceed 21.
+        Otherwise it is merely worth ***1*** point.
+        """
 
     #main runner
     async def play(self, pysino, bot):
@@ -172,3 +105,81 @@ class Blackjack(Game):
                 betResult = f'{bot.author.mention}, as this was a tie, you keep your bet of: **${bet}**'
             await bot.channel.send(f'{winScreen}\n{betResult}') #determine who wins
         self.handleBalance(str(bot.author), winner, bet) #handling winnings/losses
+
+    #loads in cards to self.deck and then shuffles
+    def resetDeck(self):
+        self.deck.clear()
+        types = {'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'}
+        for kind in types: #add 13 of each card
+            for i in range(4):
+                self.deck.append(kind)
+        for i in range(200): #shuffle
+            spot = r.randint(0,51) #randomly swap cards
+            spot2 = r.randint(0,51)
+            self.deck[spot], self.deck[spot2] = self.deck[spot2], self.deck[spot]
+            
+    #returns a list where the elements are strings that make the shape of a card with the value in the middle
+    def card(self, value):
+        top = '-----------'
+        side = '|         |'
+        center = f'|    {value}    |'
+        if len(center) > 11:
+            center = center.replace(' ', '', 1)
+        return [top,side,side,center,side,side,top]
+
+    #append new cards horizontally to 'card1', returns a list of parts
+    def displayAppend(self, card1, card2):
+        for i in range(7):
+            card1[i] += f'   {card2[i]}'
+        return card1
+
+    #build the parts into a display to send to a discord channel
+    def printCards(self, card1, card2):
+        set1 = set2 = ''
+        for i in range(7):
+            set1 += card1[i]+'\n'
+            set2 += card2[i]+'\n'
+        return f'**=== Dealer Cards ===**\n```{set1}```**=== Your Cards ===**\n```{set2}```'
+
+    #calculate total value of cards
+    def getValue(self, cardSet):
+        total = 0
+        numAces = 0
+        for card in cardSet:
+            if card == 'J' or card == 'Q' or card == 'K':
+                total += 10
+            elif card == 'A':
+                numAces += 1
+            else:
+                total += int(card)
+        if numAces >= 2:
+            total += 1*numAces
+        elif numAces == 1:
+            if total+11<=21:
+                total += 11
+            else:
+                total+=1
+        return total
+
+    #draw new card, add it to the card set and update display
+    def hit(self, cardSet, cardSetDisplay):
+        cardSet.append(self.deck.pop()) 
+        return cardSet, self.displayAppend(cardSetDisplay, self.card(cardSet[-1]))
+
+    #determine who wins as a string based on totals
+    def win(self, pv, dv):
+        winner = 0 # 0 = tie ; 1 = player ; 2 = dealer
+        result = ''
+        if pv == dv:
+            result = '**PUSH**'
+        elif pv <= 21:
+            if dv < pv or dv>21:
+                result = '**YOU WIN**'
+                winner = 1
+            else:
+                result = '**DEALER WINS**'
+                winner = 2
+        else:
+            result = '**DEALER WINS**'
+            winner = 2
+        return winner, f'{result} Your Total: {pv} / Dealer Total: {dv}'
